@@ -18,7 +18,7 @@ Posts
             <a href="{% url 'news_create' %}">Добавить новость</a>
        {% endif %}
 
-        {% if perms.articles.add_post %}
+        {% if perms.news.add_post %}
             <a href="{% url 'articles_create' %}">Добавить статью</a>
         {% endif %}
        {% if posts %}
@@ -52,10 +52,10 @@ Posts
                             <a href="{% url 'news_delete' pk=post.id %}">Удалить</a>
                         {% endif %}
                     {% elif post.choicePost == 'AR' %}
-                        {% if perms.articles.change_post %}
+                        {% if perms.news.change_post %}
                             <a href="{% url 'articles_update' pk=post.id %}">Изменить</a>
                         {% endif %}
-                        {% if perms.articles.delete_post %}
+                        {% if perms.news.delete_post %}
                             <a href="{% url 'articles_delete' pk=post.id %}">Удалить</a>
                         {% endif %}
                     {% endif %}

@@ -36,11 +36,10 @@ class PostDetail(DetailView):
 
 
 class NewsCreate(PermissionRequiredMixin, CreateView):
-
     form_class = PostForm
     model = Post
     template_name = 'news_edit.html'
-    permission_required = ('news.add_post',)
+    permission_required = 'news.add_post'
 
     def form_valid(self, form):
         form.instance.choicePost = 'NW'
@@ -48,11 +47,10 @@ class NewsCreate(PermissionRequiredMixin, CreateView):
 
 
 class ArticlesCreate(PermissionRequiredMixin, CreateView):
-
     form_class = PostForm
     model = Post
     template_name = 'articles_edit.html'
-    permission_required = ('articles.add_post',)
+    permission_required = 'news.add_post'
 
     def form_valid(self, form):
         form.instance.choicePost = 'AR'
@@ -63,25 +61,25 @@ class NewsUpdate(PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'news_edit.html'
-    permission_required = ('news.change_post',)
+    permission_required = 'news.change_post'
 
 
 class ArticlesUpdate(PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'articles_edit.html'
-    permission_required = ('articles.change_post',)
+    permission_required = 'news.change_post'
 
 
 class NewsDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'news_delete.html'
     success_url = reverse_lazy('post_list')
-    permission_required = ('news.delete_post',)
+    permission_required = 'news.delete_post'
 
 
 class ArticlesDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'articles_delete.html'
     success_url = reverse_lazy('post_list')
-    permission_required = ('articles.delete_post',)
+    permission_required = 'news.delete_post'
