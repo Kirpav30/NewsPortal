@@ -1,8 +1,11 @@
 from datetime import *
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db.models import OuterRef, Exists
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .filters import PostFilter
@@ -41,6 +44,7 @@ class NewsCreate(PermissionRequiredMixin, CreateView):
     template_name = 'news_edit.html'
     permission_required = 'news.add_post'
 
+
     def form_valid(self, form):
         form.instance.choicePost = 'NW'
         return super().form_valid(form)
@@ -51,6 +55,7 @@ class ArticlesCreate(PermissionRequiredMixin, CreateView):
     model = Post
     template_name = 'articles_edit.html'
     permission_required = 'news.add_post'
+
 
     def form_valid(self, form):
         form.instance.choicePost = 'AR'
@@ -83,3 +88,35 @@ class ArticlesDelete(PermissionRequiredMixin, DeleteView):
     template_name = 'articles_delete.html'
     success_url = reverse_lazy('post_list')
     permission_required = 'news.delete_post'
+
+
+
+
+def subscriptions(request, categories=None):
+    if request.method == 'POST':
+        category_id = request.POST.get('category_id')
+        category = Category.objects.get(id=category_id)
+        action = request.POST.get('action')
+
+        if action == 'subscribe':
+            Subscription.objects.create(user=request.user, category=category)
+        elif action == 'unsubscribe':
+            Subscription.objects.filter(
+                user=request.user,
+                category=category,
+            ).delete()
+
+    posts_with_subscriptions = Category.objects.annotate(
+        user_subscribed=Exists(
+            Subscription.objects.filter(
+                user=request.user,
+                post=OuterRef('pk'),
+            )
+        )
+    ).order_by('name')
+    return render(
+        request,
+        'subscriptions.html',
+        {'posts': posts_with_subscriptions},
+    )
+

@@ -1,0 +1,17 @@
+{% for post in posts %}
+    <p>
+        {{ post.category.name }}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="category_id" value="{{ post.category.id }}" />
+
+            {% if post.category.user_subscribed %}
+                <button disabled>Подписаться</button>
+                <button name="action" value="unsubscribe">Отписаться</button>
+            {% else %}
+                <button name="action" value="subscribe">Подписаться</button>
+                <button disabled>Отписаться</button>
+            {% endif %}
+        </form>
+    </p>
+{% endfor %}
