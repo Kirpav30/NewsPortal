@@ -1,37 +1,37 @@
 {% extends 'flatpages/default.html' %}
 {% load custom_filters %}
 {% load custom_tags %}
-<!-- Название у нас будет products -->
+{% load i18n %}
 {% block title %}
 Posts
 {% endblock title %}
 
 <!-- В контенте на странице мы выводим все товары -->
 {% block content %}
-   <h1>Все посты</h1>
+   <h1>{% trans 'All posts' %}</h1>
     <form action="" method="get">
        {{ filterset.form.as_p }}
-       <input type="submit" value="Найти" />
+       <input type="submit" value="{% trans 'Search' %}" />
    </form>
    <h3>{{ time_now|date:'M d Y' }}</h3>
        {% if perms.news.add_post %}
-            <a href="{% url 'news_create' %}">Добавить новость</a>
+            <a href="{% url 'news_create' %}">{% trans 'Add news' %}</a>
        {% endif %}
 
         {% if perms.news.add_post %}
-            <a href="{% url 'articles_create' %}">Добавить статью</a>
+            <a href="{% url 'articles_create' %}">{% trans 'Add article' %}</a>
         {% endif %}
        {% if posts %}
        <table>
            <tr>
-               <td>Заголовок</td>
-               <td>Категория</td>
-               <td>Текст</td>
-               <td>Дата публикации</td>
+               <td>{% trans 'title' %}</td>
+               <td>{% trans 'category post' %}</td>
+               <td>{% trans 'text post' %}</td>
+               <td>{% trans 'date' %}</td>
 
 
                 {% if perms.news.change_post or perms.news.delete_post or perms.articles.change_post or perms.articles.delete_post%}
-                <td>Действия</td>
+                <td>{% trans 'action' %}</td>
                 {% endif %}
            </tr>
 
@@ -46,17 +46,17 @@ Posts
                 <td>
                     {% if post.choicePost == 'NW' %}
                         {% if perms.news.change_post %}
-                            <a href="{% url 'news_update' pk=post.id %}">Изменить</a>
+                            <a href="{% url 'news_update' pk=post.id %}">{% trans 'Edit' %}</a>
                         {% endif %}
                         {% if perms.news.delete_post %}
-                            <a href="{% url 'news_delete' pk=post.id %}">Удалить</a>
+                            <a href="{% url 'news_delete' pk=post.id %}">{% trans 'Delete' %}</a>
                         {% endif %}
                     {% elif post.choicePost == 'AR' %}
                         {% if perms.news.change_post %}
-                            <a href="{% url 'articles_update' pk=post.id %}">Изменить</a>
+                            <a href="{% url 'articles_update' pk=post.id %}">{% trans 'Edit' %}</a>
                         {% endif %}
                         {% if perms.news.delete_post %}
-                            <a href="{% url 'articles_delete' pk=post.id %}">Удалить</a>
+                            <a href="{% url 'articles_delete' pk=post.id %}">{% trans 'Delete' %}</a>
                         {% endif %}
                     {% endif %}
 
@@ -66,7 +66,7 @@ Posts
        </table>
    {% else %}
        <!-- Если товаров нет, говорим, что товаров нет ;) -->
-       <h2>Постов нет!</h2>
+       <h2>{% trans 'No posts!' %}</h2>
    {% endif %}
     {% if page_obj.has_previous %}
        <a href="?{% url_replace page=1 %}">1</a>
