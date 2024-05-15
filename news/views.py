@@ -1,15 +1,20 @@
-from datetime import *
+import pytz
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import OuterRef, Exists
+from django.http import HttpResponse
 
-from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views import View
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
+from django.utils import timezone
+from django.shortcuts import redirect, render
 from .filters import PostFilter
 from .forms import PostForm
 from .models import *
+from .translation import PostTranslate
+from datetime import datetime
+
 
 
 class PostList(ListView):
@@ -28,7 +33,13 @@ class PostList(ListView):
         context = super().get_context_data(**kwargs)
         context['time_now'] = datetime.utcnow()
         context['filterset'] = self.filterset
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
         return context
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect(self.request.path)
 
 
 class PostDetail(DetailView):
@@ -119,3 +130,20 @@ def subscriptions(request, categories=None):
         {'posts': posts_with_subscriptions},
     )
 
+
+class Index(View):
+    def get(self, request):
+        models = PostTranslate
+
+        context = {
+            'models': models,
+            'current_time': timezone.localtime(timezone.now()),
+            'timezones': pytz.common_timezones #  добавляем в контекст все доступные часовые пояса
+        }
+
+        return HttpResponse(render(request, 'translation.html', context))
+
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
