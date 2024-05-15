@@ -8,6 +8,7 @@ Posts
 
 <!-- В контенте на странице мы выводим все товары -->
 {% block content %}
+    {% include "translation.html" %}
    <h1>{% trans 'All posts' %}</h1>
     <form action="" method="get">
        {{ filterset.form.as_p }}
